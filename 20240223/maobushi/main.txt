@@ -1,0 +1,591 @@
+
+https://www.tohoho-web.com/ex/semantic-web.html
+https://www.soumu.go.jp/main_sosiki/joho_tsusin/policyreports/chousa/info_frontier/pdf/050412_2_4.pdf
+
+[[Semantic Web]]
+
+---
+## Semantic Webとは?
+- Semanticとは?
+	- 意味論という意味
+- Semantic Webとは?
+	- 1998年に[[Tim berners-lee]]が提唱した
+	- Webサイト上の情報などにMeta Dataを付与して意味(semantics)を持たせることで、コンピュータが、より豊富で正確な情報を分析・整理・再利用・提供できるようになることを目指した思想・構想・技術・プロジェクトを表す
+---
+## Meta Dataとは?
+- メタデータとは「データに付加するデータ」といった意味で、例えば、`<div>山田太郎</div>` というデータに対して、`<div _property="creator"_>山田太郎</div> `というデータを付加することで、山田太郎が単なる文字列ではなく、作成者であることを明示します。
+- creator などの **意味・語彙・スキーマ** を定義するものと、定義されたものをどの様に表現するかの **記法・文法・言語** に大別されます。
+	- 記法としてはRDFが用いられる
+	- ![[Screenshot 2024-02-23 at 15.47.39.png]]
+
+---
+
+## RDFとは何か
+- [[RSS]]やDBpediaで使用されている
+- 主語(Subject),述語(Predicate),目的語(Object)の3要素をトリプルと呼び、すべてのデータをこの関係で記述する
+- - 例えば `[山田太郎は(主語)]-[名乗ります(述語)]-[山田太郎と(目的語)] `など。
+- 例えば `[山田太郎は(主語)]-[住んでいます(述語)]-[東京都港区に(目的語)] `など。
+- 例えば `[サザンオールスターズは(主語)]-[バンドメンバを含んでいます(述語)]-[桑田佳祐を(目的語)] `など。
+- 主語、述語、目的語はすべて URI で表します。
+- RDF 自体はフレームワークで、このフレームワークに従った具体的な表現形式として、[N-Triples](https://www.tohoho-web.com/ex/semantic-web.html#n-triples), [Turtle](https://www.tohoho-web.com/ex/semantic-web.html#turtle), [TriG](https://www.tohoho-web.com/ex/semantic-web.html#trig), [N-Quads](https://www.tohoho-web.com/ex/semantic-web.html#n-quads), [RDFa](https://www.tohoho-web.com/ex/semantic-web.html#rdfa), [RDF/XML](https://www.tohoho-web.com/ex/rdf-xml), [JSON-LD](https://www.tohoho-web.com/ex/semantic-web.html#json-ld) があります。
+- ![[Screenshot 2024-02-23 at 16.07.17.png]]
+---
+## Schema.org
+- Google, Microsoft, Yahoo などの共同で設立された方と属性の集合を定義しているコミュニティ活動
+- 例えば、Person という型(type)は、name(氏名)、address(住所)、gender(性別)、birthDate(誕生日)などの属性(property)を持ちます。
+- name(氏名)は Text、address(住所) は Text または PostalAddress といった、属性もまた型を持ちます。
+- 型や属性は [http://schema.org/Person](http://schema.org/Person) や [http://schema.org/name](http://schema.org/name) などの URI で表されます。
+
+
+## Schema.orgの定義の例
+![[Screenshot 2024-02-23 at 15.57.52.png]]
+
+
+---
+
+## SPARQL
+
+- SPARQL Protocol And RDF Query Language の略です。Linux 系で好まれる再帰的頭字語です。
+- [DBpedia](https://www.tohoho-web.com/ex/semantic-web.html#dbpedia) などの RDFデータに対して、SQL ライクな文法でクエリをかけることができます。
+
+
+- LLMとの今後 ![[Pasted image 20240223205544.png]]
+- 自然言語からLLMがRDFを生成し、生成されたRDFを元にLLMがOutPutする未来
+	- これまでのRDF財産を無駄にしない
+	- より正確な情報を情報圧縮して渡せる
+	- 個人的にはJsonでもいいのではとは思う。RDFというフォーマットもベクトルデータに内包されると思う
+## 新幹線の路線で試してみる
+- 北陸新幹線のダイヤ
+	![[Screenshot 2024-02-23 at 18.21.20.png]]
+
+- 質問 : `北陸新幹線の"かがやき"が停車する駅を全て教えてください。北陸新幹線の他の種別の停車駅は答えないでください。`
+
+
+- ChatGPT4の場合
+	- https://chat.openai.com/share/8422eafa-7b37-4373-b185-91c3ff2ef9b1
+![[Screenshot 2024-02-23 at 20.43.29.png]]
+- GPT 3.5の場合
+	- https://chat.openai.com/share/9a23f759-54b3-4df8-9647-25b5a5356957 ![[Screenshot 2024-02-23 at 20.46.04.png]]
+
+- Gemini 1.5 の場合(2024/2/23)![[Screenshot 2024-02-23 at 20.38.22.png]]
+- Groq![[Screenshot 2024-02-23 at 20.47.54.png]]
+- 結果
+	- 沿線に含まれない駅の場合は-10
+
+| 停車駅 | 正解 | GPT4 | GPT3.5 | Gemini | Groq |
+| ---- | ---- | ---- | ---- | ---- | ---- |
+| 東京 | O | O | O | O |  |
+| 上野 | O | O | O | O |  |
+| 大宮 | O | O | O | O |  |
+| 熊谷 |  | O |  |  |  |
+| 本庄早稲田 |  |  | X |  |  |
+| 高崎 |  | O |  |  |  |
+| 安中榛名 |  | O |  |  |  |
+| 軽井沢 |  | O | O |  |  |
+| 佐久間平 |  | O |  |  |  |
+| 上田 |  | O |  |  |  |
+| 長野 | O | O | O | O |  |
+| 飯山 |  | O |  |  |  |
+| 上越妙高 |  | O |  |  |  |
+| 糸魚川 |  | O |  |  |  |
+| 黒部雨奈月温泉 |  | O |  |  |  |
+| 富山 | O | O |  | O |  |
+| 新高岡 |  | O |  |  |  |
+| 金沢 | O | O | O | O |  |
+| 正解 - 誤答 | 6 | 6 - 11 = -5 | 6 - 1 -(5 * 10) = -45 | 6 - 0 = 6 | 6 - (5*10) = -50 |
+
+
+- 北陸新幹線のRDF
+	- https://www.wikidata.org/wiki/Q1037409
+
+## RDFデータをChatGPT 4に生成してもらう
+- 北陸新幹線のwikiをChatGPT 4にRDFに変換してもらった。
+
+以下は、提供された情報に基づいて作成した全ての停車駅に関するRDFデータです。このデータはTurtle形式で記述されており、各列車種別と停車駅、終着駅に関する情報を含んでいます。
+
+```turtle
+@prefix ex: <http://example.org/railway/> .
+@prefix st: <http://example.org/station/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+st:上野 a rdfs:Class ;
+    rdfs:label "上野駅" .
+
+st:富山 a rdfs:Class ;
+    rdfs:label "富山駅" .
+
+st:新高岡 a rdfs:Class ;
+    rdfs:label "新高岡駅" .
+
+st:佐久平 a rdfs:Class ;
+    rdfs:label "佐久平駅" .
+
+st:上越妙高 a rdfs:Class ;
+    rdfs:label "上越妙高駅" .
+
+st:上田 a rdfs:Class ;
+    rdfs:label "上田駅" .
+
+st:軽井沢 a rdfs:Class ;
+    rdfs:label "軽井沢駅" .
+
+st:東京 a rdfs:Class ;
+    rdfs:label "東京駅" .
+
+st:飯山 a rdfs:Class ;
+    rdfs:label "飯山駅" .
+
+st:熊谷 a rdfs:Class ;
+    rdfs:label "熊谷駅" .
+
+st:安中榛名 a rdfs:Class ;
+    rdfs:label "安中榛名駅" .
+
+st:高崎 a rdfs:Class ;
+    rdfs:label "高崎駅" .
+
+st:長野 a rdfs:Class ;
+    rdfs:label "長野駅" .
+
+st:黒部宇奈月温泉 a rdfs:Class ;
+    rdfs:label "黒部宇奈月温泉駅" .
+
+st:大宮 a rdfs:Class ;
+    rdfs:label "大宮駅" .
+
+st:本庄早稲田 a rdfs:Class ;
+    rdfs:label "本庄早稲田駅" .
+
+st:糸魚川 a rdfs:Class ;
+    rdfs:label "糸魚川駅" .
+
+st:金沢 a rdfs:Class ;
+    rdfs:label "金沢駅" .
+
+ex:あさま a rdfs:Class ;
+    rdfs:label "あさま" ;
+    ex:departureTime "08分"^^xsd:string ;
+    ex:stopsAt st:東京, st:上野, st:大宮, st:熊谷, st:本庄早稲田, st:高崎, st:安中榛名, st:軽井沢, st:佐久平, st:上田, st:長野 ;
+    ex:terminatesAt st:長野 .
+
+ex:かがやき a rdfs:Class ;
+    rdfs:label "かがやき" ;
+    ex:departureTime "24分"^^xsd:string ;
+    ex:stopsAt st:東京, st:上野, st:大宮, st:金沢 ;
+    ex:terminatesAt st:金沢 .
+
+ex:はくたか a rdfs:Class ;
+    rdfs:label "はくたか" ;
+    ex:departureTime "56分"^^xsd:string ;
+    ex:stopsAt st:東京, st:上野, st:大宮, st:高崎, st:軽井沢, st:佐久平, st:上田, st:長野, st:飯山, st:上越妙高, st:
+
+糸魚川, st:黒部宇奈月温泉, st:富山, st:新高岡, st:金沢 ;
+    ex:terminatesAt st:金沢 .
+
+ex:つるぎ a rdfs:Class ;
+    rdfs:label "つるぎ" ;
+    ex:departureTime "富山発15分"^^xsd:string ;
+    ex:stopsAt st:富山, st:金沢 ;
+    ex:terminatesAt st:金沢 .
+```
+
+このRDFデータは、各列車の種別（`あさま`、`かがやき`、`はくたか`、`つるぎ`）ごとに、発車時刻、停車駅、終着駅を記述しています。各駅もリソースとして定義され、ラベル（駅名）が付けられています。このデータを用いることで、列車と駅の関係を表現するセマンティックウェブアプリケーションや情報検索システムを構築できます。
+
+---
+
+## 生成されたRDFを元に、再度答えてもらう
+
+- 生成してもらったRDF
+	- Chat履歴:https://chat.openai.com/share/76353c5b-01f1-4fa7-9ad5-437b6486f571
+	- ![[Screenshot 2024-02-23 at 21.04.56.png]]
+
+	```html
+	@prefix ex: <http://example.org/railway/> .
+	@prefix st: <http://example.org/station/> .
+	@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+	@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+	
+	st:上野 a rdfs:Class ;
+	    rdfs:label "上野駅" .
+	
+	st:富山 a rdfs:Class ;
+	    rdfs:label "富山駅" .
+	
+	st:新高岡 a rdfs:Class ;
+	    rdfs:label "新高岡駅" .
+	
+	st:佐久平 a rdfs:Class ;
+	    rdfs:label "佐久平駅" .
+	
+	st:上越妙高 a rdfs:Class ;
+	    rdfs:label "上越妙高駅" .
+	
+	st:上田 a rdfs:Class ;
+	    rdfs:label "上田駅" .
+	
+	st:軽井沢 a rdfs:Class ;
+	    rdfs:label "軽井沢駅" .
+	
+	st:東京 a rdfs:Class ;
+	    rdfs:label "東京駅" .
+	
+	st:飯山 a rdfs:Class ;
+	    rdfs:label "飯山駅" .
+	
+	st:熊谷 a rdfs:Class ;
+	    rdfs:label "熊谷駅" .
+	
+	st:安中榛名 a rdfs:Class ;
+	    rdfs:label "安中榛名駅" .
+	
+	st:高崎 a rdfs:Class ;
+	    rdfs:label "高崎駅" .
+	
+	st:長野 a rdfs:Class ;
+	    rdfs:label "長野駅" .
+	
+	st:黒部宇奈月温泉 a rdfs:Class ;
+	    rdfs:label "黒部宇奈月温泉駅" .
+	
+	st:大宮 a rdfs:Class ;
+	    rdfs:label "大宮駅" .
+	
+	st:本庄早稲田 a rdfs:Class ;
+	    rdfs:label "本庄早稲田駅" .
+	
+	st:糸魚川 a rdfs:Class ;
+	    rdfs:label "糸魚川駅" .
+	
+	st:金沢 a rdfs:Class ;
+	    rdfs:label "金沢駅" .
+	
+	ex:あさま a rdfs:Class ;
+	    rdfs:label "あさま" ;
+	    ex:departureTime "08分"^^xsd:string ;
+	    ex:stopsAt st:東京, st:上野, st:大宮, st:熊谷, st:本庄早稲田, st:高崎, st:安中榛名, st:軽井沢, st:佐久平, st:上田, st:長野 ;
+	    ex:terminatesAt st:長野 .
+	
+	ex:かがやき a rdfs:Class ;
+	    rdfs:label "かがやき" ;
+	    ex:departureTime "24分"^^xsd:string ;
+	    ex:stopsAt st:東京, st:上野, st:大宮, st:金沢 ;
+	    ex:terminatesAt st:金沢 .
+	
+	ex:はくたか a rdfs:Class ;
+	    rdfs:label "はくたか" ;
+	    ex:departureTime "56分"^^xsd:string ;
+	    ex:stopsAt st:東京, st:上野, st:大宮, st:高崎, st:軽井沢, st:佐久平, st:上田, st:長野, st:飯山, st:上越妙高, st:糸魚川, st:黒部宇奈月温泉, st:富山, st:新高岡, st:金沢 ;
+	    ex:terminatesAt st:金沢 .
+	
+	ex:つるぎ a rdfs:Class ;
+	    rdfs:label "つるぎ" ;
+	    ex:departureTime "富山発15分"^^xsd:string ;
+	    ex:stopsAt st:富山, st:金沢 ;
+	    ex:terminatesAt st:金沢 .
+	
+	```
+
+- RDFを読み込んでもらって、再度答えてもらう
+	- 与えたPrompt:`以下のRDFデータを元に、北陸新幹線の"かがやき"が停車する駅を全て教えてください。北陸新幹線の他の種別の停車駅は答えないでください。`+上記RDF
+- 結果
+- ChatGPT4
+```
+北陸新幹線の"かがやき"が停車する駅は以下の通りです。
+
+- 東京駅
+- 上野駅
+- 大宮駅
+- 金沢駅
+```
+
+- ChatGPT3.5
+```
+北陸新幹線の"かがやき"が停車する駅は次の通りです:
+
+- 東京駅 (st:東京)
+- 上野駅 (st:上野)
+- 大宮駅 (st:大宮)
+- 金沢駅 (st:金沢)
+```
+
+- Gemini Pro 1.5
+```
+RDFデータに基づき、北陸新幹線「かがやき」が停車する駅は以下の通りです。
+
+1. 東京駅
+2. 上野駅
+3. 大宮駅
+4. 金沢駅
+
+**その他の停車駅は含まれていません。**
+
+
+**注意**:
+
+* 上記の情報は、提供されたRDFデータに基づいています。実際の運行状況は異なる場合がありますので、最新情報をご確認ください。
+* 北陸新幹線には、「かがやき」以外にも「あさま」、「はくたか」、「つるぎ」などの種別があります。これらの停車駅は、「かがやき」とは異なります。
+
+ご参考になれば幸いです。
+
+```
+
+- Groq
+```
+  Sure! Here are the stations where the "かがやき" train stops, according to the provided RDF data:
+
+* 東京 (Tokyo)
+* 上野 (Ueno)
+* 大宮 (Omiya)
+* 金沢 (Kanazawa)
+
+Note that the "かがやき" train does not stop at 新高岡 (Niigata) or 富山 (Toyama), even though they are listed as stops for other trains in the data.
+```
+
+## 結果
+- (r = RDF)
+
+| 停車駅 | 正解 | rGPT4 | rGPT3.5 | rGemini | rGroq |
+| ---- | ---- | ---- | ---- | ---- | ---- |
+| 東京 | O | O | O | O | O |
+| 上野 | O | O | O | O | O |
+| 大宮 | O | O | O | O | O |
+| 熊谷 |  |  |  |  |  |
+| 本庄早稲田 |  |  |  |  |  |
+| 高崎 |  |  |  |  |  |
+| 安中榛名 |  |  |  |  |  |
+| 軽井沢 |  |  |  |  |  |
+| 佐久間平 |  |  |  |  |  |
+| 上田 |  |  |  |  |  |
+| 長野 | O |  |  |  |  |
+| 飯山 |  |  |  |  |  |
+| 上越妙高 |  |  |  |  |  |
+| 糸魚川 |  |  |  |  |  |
+| 黒部雨奈月温泉 |  |  |  |  |  |
+| 富山 | O |  |  |  |  |
+| 新高岡 |  |  |  |  |  |
+| 金沢 | O | O | O | O | O |
+| 正解 - 誤答 | 6 - 0 = 6 | 6- 2 = 4 | 6- 2 = 4 | 6- 2 = 4 | 6- 2 = 4 |
+
+
+## わかったこと
+- 適切なRDFを与えれば低いモデルでも正答率は高い。
+- 適切なRDFをLLMで記述できる可能性は高い
+	- 人間が一応見て確認するか,GPT5が誤りもなくRDFに転換してくれる未来を待つのもあり
+
+## 考えられること
+- RDFである必要はないかもしれない
+	- JSONとかで圧縮してもいいかもしれない
+- 低い情報量のLLMが高い情報を持つLLMに対し、その都度RDFを作成するRequestを行う。高い性能を持つLLMはその都度Wikidataなどを参照し、過去のRDFデータを参照しつつ、不足していればその都度作成する。最後に、RDFをデータベースに保存し、低い性能のLLMでも高精度な回答を行える未来があるかもしれない
+
+
+## 普及例
+- Google リッチスニペット
+	- ![](https://makisaka.biz/wp-content/uploads/2022/10/image.jpg)
+- RSSによるヘッドラインの配信
+	- ![](https://makisaka.biz/wp-content/uploads/2022/10/image-10.png)
+
+---
+
+
+- 中央線はどうだろう?
+	- 曜日とか時間帯とか色々あってわかりづらかった
+
+
+| 駅名 | 各駅停車 | 快速 | 特快 |
+| ---- | ---- | ---- | ---- |
+| [東京](https://www.chuosen.jp/stations/tokyo/) | 停車 | 停車 | 停車 |
+| [神田](https://www.chuosen.jp/stations/kanda/) | 停車 | 停車 | 停車 |
+| [御茶ノ水](https://www.chuosen.jp/stations/ochanomizu/) | 停車 | 停車 | 停車 |
+| [水道橋](https://www.chuosen.jp/stations/suidobashi/) | 停車 | ｜ | ｜ |
+| [飯田橋](https://www.chuosen.jp/stations/iidabashi/) | 停車 | ｜ | ｜ |
+| [市ケ谷](https://www.chuosen.jp/stations/ichigaya/) | 停車 | ｜ | ｜ |
+| [四ツ谷](https://www.chuosen.jp/stations/yotsuya/) | 停車 | 停車 | 停車 |
+| [信濃町](https://www.chuosen.jp/stations/shinanomachi/) | 停車 | ｜ | ｜ |
+| [千駄ヶ谷](https://www.chuosen.jp/stations/sendagaya/) | 停車 | ｜ | ｜ |
+| [代々木](https://www.chuosen.jp/stations/yoyogi/) | 停車 | ｜ | ｜ |
+| [新宿](https://www.chuosen.jp/stations/shinjuku/) | 停車 | 停車 | 停車 |
+| [大久保](https://www.chuosen.jp/stations/okubo/) | 停車 | ｜ | ｜ |
+| [東中野](https://www.chuosen.jp/stations/higashinakano/) | 停車 | ｜ | ｜ |
+| [中野](https://www.chuosen.jp/stations/nakano/) | 停車／始発あり | 停車 | 停車 |
+| [高円寺](https://www.chuosen.jp/stations/koenji/) | 停車 | 停車 | ｜ |
+| [阿佐ヶ谷](https://www.chuosen.jp/stations/asagaya/) | 停車 | 停車 | ｜ |
+| [荻窪](https://www.chuosen.jp/stations/ogikubo/) | 停車 | 停車 | ｜ |
+| [西荻窪](https://www.chuosen.jp/stations/nishiogikubo/) | 停車 | 停車 | ｜ |
+| [吉祥寺](https://www.chuosen.jp/stations/kichijoji/) | 停車 | 停車 | ｜ |
+| [三鷹](https://www.chuosen.jp/stations/mitaka/) | 停車／始発あり | 停車 | 停車 |
+
+
+- 解説ページから抜粋
+
+```
+## 覚えておきたい中央線の基礎知識
+
+- 2020年ダイヤ改正で終日、快速（オレンジ）と各駅停車（黄色）に分離された
+- 三鷹～御茶ノ水駅間の「各駅停車」は、黄色の総武線が走る
+- 東京駅と神田駅に「各駅停車」は発着しない（御茶ノ水で黄色の列車と乗り換え）
+- 土休日ダイヤの「快速」は、高円寺駅、阿佐ケ谷駅、西荻窪駅を通過する
+- 吉祥寺駅を「中央特快」「青梅特快」「通勤特快」は通過する
+- 「通勤快速」は平日下りの夕方～夜のみ運転、「通勤特快」は平日上りの朝のみ運転
+- 「中央特快」「青梅特快」「通勤快速」は、三鷹駅と国分寺駅で「快速」と待ち合わせし、同じホームで乗り換えができる
+- 上り（東京方面）の主な始発駅は、大月、高尾、八王子、豊田、立川、武蔵小金井、また青梅線の青梅と河辺
+- オレンジ色の電車は、平日の朝（通勤時間帯）に、1号車（東京方の先頭車）が女性専用車両となる
+- トイレは4号車（改修工事が終了した一部の編成のみ）
+- 金・土・祝前日の終電は、ひどい混雑のため乗らないほうが良い（コロナ以前は新宿では乗れないほど混雑することがあった）
+- 国分寺～新宿がノンストップの「通勤特快」は、体調が悪いときに乗らないほうが良い
+- グリーン車の導入予定は2024年度末以降（東京～大月、立川～青梅）
+
+## 種別
+
+### 各駅停車
+
+以前は、中央線の各駅停車と言えば、時間帯や区間によって行先や電車の色が異なっていたが、2020年3月のダイヤ改正で大きな変更があった。
+
+#### 黄色の各駅停車
+
+2020年3月14日（土）ダイヤ改正から、運転区間が千葉～三鷹駅間のみとなり、三鷹～立川駅間の乗り入れが取りやめとなりました。
+
+![E231系のJR中央・総武線各駅停車](https://www.chuosen.jp/i/300x200/traintype_local_002_1200.webp)  
+E231系のJR中央・総武線各駅停車
+
+各駅停車は、黄色帯の総武線が千葉方面～御茶ノ水～三鷹駅間を走る。神田駅・東京駅へは行かないため、御茶ノ水駅で乗り換えが必要。
+
+三鷹～御茶ノ水間は、中央・総武緩行線の線路を走り、快速の停まらない東中野、大久保、代々木、千駄ヶ谷、信濃町、市ヶ谷、飯田橋、水道橋にも停車する。三鷹～中野駅間は東京メトロ東西線が直通運転する。
+
+近年、山手線で走っていたE231系500番台が転属されており、現在はほぼE231系500番台となっている。
+
+#### オレンジの各駅停車は廃止
+
+2020年3月14日（土）ダイヤ改正で、オレンジ帯の電車で走る東京駅発着の「各駅停車」はなくなりました。オレンジ色の電車は終日、東中野、大久保、代々木、千駄ケ谷、信濃町、市ケ谷、飯田橋、水道橋を通過するようになりました。
+
+2020年のダイヤ改正で、中央・総武線各駅停車（緩行線）として走るオレンジ色の中央線はなくなった。早朝の初電から深夜の終電まで、各駅停車はいわゆる黄色の総武線で運転されている。
+
+ただし、駅の発車案内などでは、平日の中野駅以西の下り、土休日の吉祥寺駅以西の下りは、オレンジ色の快速も各駅に停車するため「各駅停車」として表示されている場合がある。
+
+### 快速
+
+2020年3月14日（土）ダイヤ改正から、初電から終電まで終日「快速」が運転されるようになりました。
+
+![快速](https://www.chuosen.jp/i/300x200/traintype_rapid_001_1200.webp)  
+209系(左)とE233系(右)
+
+単に「中央線」と言えば「快速」のことを指すことが多い。
+
+快速と言っても下り列車は平日の中野から先（高尾方面）、土休日の吉祥寺から先（高尾方面）は各駅停車と同じで、駅での案内表示も「各駅停車」となる。
+
+土休日ダイヤ（土・日・祝）では、西荻窪、阿佐ヶ谷、高円寺を通過するが、中央・総武緩行線（中央・総武線各駅停車）が遅延すると、快速が臨時停車することがある。
+
+途中の三鷹、国分寺、立川で「中央特快」「青梅特快」「通勤快速」と待ち合わせがあると、特快などに乗り換えができる。それぞれに追い抜かれるため、待ち合わせが多いと、それだけ快速の所要時間は長くなる。
+
+上りは、ほぼ全ての快速が東京行きで走る。 土休日ダイヤの朝は、新宿行きもあるが、これは折り返し新宿始発のホリデー快速があるため。また遅延時にも新宿行きに変更される場合がある。
+
+2019年3月16日（土）から現行のE233系0番台に加えて、常磐線各駅停車や東京メトロ千代田線で走っていた209系1000番台が2編成投入され、営業運転がはじまった。ドア上のディスプレイやドア横の開閉ボタンがないほか、自動放送システムがないため、車掌が乗務員室から案内している。椅子は固め。
+
+### 中央特快（ちゅうおうとっかい）
+
+![中央特快](https://www.chuosen.jp/i/300x200/traintype_chuospecialrapid_001_1200.webp)  
+中央特快
+
+特快（とっかい）とは特別快速のこと。下りの立川から先（高尾・大月方面）、上りの中野から先（新宿・東京方面）は快速と同じ停車駅。
+
+停車駅は、高尾、西八王子、八王子、豊田、日野、立川、国分寺、三鷹、中野、新宿、四ツ谷、御茶ノ水、神田、東京。
+
+通過する駅は、国立、西国分寺、武蔵小金井、東小金井、武蔵境、吉祥寺、西荻窪、阿佐ヶ谷、高円寺。
+
+三鷹と国分寺で先を走っていた快速（下りの駅表示は各駅停車）との待ち合わせがあり、同じホーム（向かいの番線）で乗り換えができる。一部の上り特快は立川でも待ち合わせがある。
+
+快速との待ち合わせを活用する場合、自分が向かう駅の手前に三鷹または国分寺、立川があれば、とりあえず特快に乗ることで通過する駅へも早く到着することができる（遅延時には快速との待ち合わせがなくなることもある）。
+
+2020年のダイヤ改正から、209系で運転される中央特快がある。
+
+2017年3月4日ダイヤ改正で、新宿始発の中央特快はなくなった（~~下り新宿始発の中央特快は中野を通過するので注意。~~）。
+
+» [中央特快の停車駅・始発駅・行先](https://www.chuosen.jp/trains/chuo-special-rapid/)
+
+### 青梅特快（おうめとっかい）
+
+![青梅特快](https://www.chuosen.jp/i/300x200/traintype_omespecialrapid_001_1200.webp)  
+青梅線に直通する青梅特快
+
+中央線内は中央特快と同じ停車駅。下りは立川から先は青梅線に入り、青梅線内は各駅停車となる。上りは青梅始発の東京行き。
+
+三鷹、国分寺、立川（一部の列車のみ）で、先を走っていた快速との待ち合わせがあり、同じホーム（向かいの番線）で乗り換えができる。
+
+遅延で青梅線との直通運転が取り止めになると、立川行きや立川始発となることがよくある。
+
+また大幅に遅延すると、青梅特快の八王子行きや豊田行きといった珍表示で走る場合がある。折り返しが八王子始発などの青梅特快となることもある。
+
+ダイヤが乱れると209系の青梅特快が走ることがあるが、209系にはドア横の開閉ボタンがない。
+
+» [青梅特快の停車駅・始発駅・行先](https://www.chuosen.jp/trains/ome-special-rapid/)
+
+» [青梅線の路線図](https://www.localtowns.jp/routemap/jreast-ome/)
+
+### 通勤快速
+
+![通勤快速](https://www.chuosen.jp/i/300x200/traintype_commuterrapid_001_1200.webp)  
+平日下りで運転される通勤快速
+
+平日の夕方から夜にかけて、下り限定で走る。
+
+特快の停車駅に加えて荻窪と吉祥寺に停車する。同時間帯に下りの中央特快と青梅特快は運転されない。
+
+三鷹と国分寺で先を走っていた快速（駅での案内表示は各駅停車）と待ち合わせがあり、同じホーム（向かいの番線）で乗り換えができる。
+
+行先は、高尾、大月（中央本線）、河口湖（富士急行線）、青梅（青梅線）。
+
+特別快速は略して「特快」と呼ばれるが、通勤快速を「通快」と呼ぶ人は少ない。
+
+2019年3月16日ダイヤ改正で「武蔵五日市・高麗川」行きが新設されたが、2022年3月のダイヤ改正で五日市線直通と八高線直通は廃止となった。
+
+ダイヤが乱れると209系の通勤快速が走ることがあるが、209系が東京駅で通勤快速大月行きになってしまった場合は、高尾や豊田などで車両交換される（乗り換えが必要）。
+
+» [通勤快速の停車駅・始発駅・行先](https://www.chuosen.jp/trains/commuter-rapid/)
+
+### 通勤特快
+
+![通勤特快](https://www.chuosen.jp/i/300x200/traintype_commuterspecialrapid_001_1200.webp)  
+平日朝の上りで運転される通勤特快
+
+平日朝の通勤通学時間帯に上り限定で走る。行先はすべて東京。
+
+中央本線の大月～高尾は各駅停車。中央線内は、高尾・八王子・立川・国分寺・新宿の順に停車する。三鷹と中野も通過するので注意が必要。
+
+青梅始発は、青梅線内の各駅に停車する。
+
+快速との待ち合わせがあり乗り換えできるのは、立川と国分寺。途中の武蔵小金井や東小金井、三鷹、中野などで快速を追い抜く（通過するため乗り換え不可）。
+
+体調が悪くなった乗客を対応する為に、通過駅に臨時停車することがある。混雑が激しく、国分寺～新宿駅間はノンストップとなるので、体調が優れないときは乗らないほうが良い。国分寺駅では実際に同様の案内がされることがある。とくに途中で遅延が発生すると、大混雑の車内に長時間缶詰になる可能性もある。
+
+ダイヤが乱れると209系の通勤特快が走ることがある。
+
+### ホリデー快速おくたま
+
+2023年3月18日（土）ダイヤ改正で運転区間が、下りが新宿始発の青梅行き、上りが青梅始発の東京行きに変更。繁忙期のみ青梅～奥多摩駅間で臨時ホリデー快速を運転し、青梅駅で乗り換えができる。ホリデー快速あきがわ号は運転取りやめ。
+
+土休日ダイヤで運転される中央線・青梅線を直通する列車。中央線内は特快と同じ停車駅、青梅線内は通過駅がある。
+
+快速や特快と同じ車両（E233系）で運転され、普通乗車券（Suicaなど含む）で利用できる。追加料金等は不要。
+
+青梅線内の停車駅は、西立川、拝島、福生（ふっさ）、青梅。イベントや花の見頃に合わせて、羽村や日向和田（になたわだ）に臨時停車することがある。
+
+上りの中央線内の駅では、案内表示が「特別快速」になる。
+
+~~東京・新宿～拝島駅間は、おくたま号6両＋あきがわ号4両が併結運転され、おくたま号は奥多摩まで、あきがわ号は武蔵五日市まで走る。~~
+
+### むさしの号（八王子～国立～大宮）
+
+中央線・武蔵野線を直通運転して大宮駅を発着する武蔵野線の列車。 武蔵野線もオレンジ色を採用しているので、八王子～国立駅間では乗り間違いに注意。
+
+2014年3月17日のダイヤ改正で、中央線内も各駅停車となった。武蔵野線の209系、E231系で運転される。普通乗車券（Suicaなど含む）で利用できる。
+
+### ホリデー快速ビューやまなし
+
+今後の運転予定はありません
+
+一部期間の土日祝日に運転される新宿～小淵沢駅の臨時列車。
+
+週末の山梨・長野方面への日帰り旅行に利用されるが、復路の上り列車では八王子、立川から新宿方面へ乗るにも便利。
+
+自由席は普通乗車券（Suicaなど含む）で利用できる。2階建の215系で運転。
+```
